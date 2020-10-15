@@ -1,0 +1,9 @@
+google-cloud-texttospeech
+python-telegram-bot
+beautifulsoup4
+requests
+pandas
+python-dotenv
+random_word
+googletrans
+PyDictionary
