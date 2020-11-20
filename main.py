@@ -43,7 +43,13 @@ def translate_from_file(update, context,file_path,uid):
   text = r.recognize_google(audio)
 
   translator = Translator()
-  translated = translator.translate(text,dest=get_language_code(uid))
+  while True:
+    try:
+      translated = translator.translate(text,dest=get_language_code(uid))
+      break
+    except:
+      print("Exception happened")
+      pass
   context.bot.send_message(chat_id=update.message.chat_id, text="`{}`".format(translated.text),  parse_mode='MarkdownV2')
   print(translated.text,get_language_code(uid))
 
