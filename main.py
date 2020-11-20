@@ -3,6 +3,7 @@ from telegram import ParseMode
 import speech_recognition as sr
 from googletrans import Translator
 import pandas as pd
+import os
 import logging
 import subprocess
 from dotenv import load_dotenv
@@ -164,7 +165,12 @@ def source(update, context):
   if userid not in userbase:
     userbase[userid] = {}
   userbase[userid]["lastcmd"] = "src"
-  context.bot.send_message(chat_id=update.message.chat_id, text="You can now send audio in `{}`".format(userbase[userid]["src"]),  parse_mode='MarkdownV2')
+  if "src" not in userbase[userid]:
+    context.bot.send_message(chat_id=update.message.chat_id, text="Source Language not set, please set source language using `setsource` command",  parse_mode='MarkdownV2')
+  elif "dest" not in userbase[userid]:
+    context.bot.send_message(chat_id=update.message.chat_id, text="Destination Language not set, please set destination language using `setdestination` command",  parse_mode='MarkdownV2')
+  else:
+    context.bot.send_message(chat_id=update.message.chat_id, text="You can now send audio in `{}`".format(userbase[userid]["src"]),  parse_mode='MarkdownV2')
 
 def transcribe(update, context):
   global userbase
@@ -172,7 +178,7 @@ def transcribe(update, context):
   if userid not in userbase:
     userbase[userid] = {}
   userbase[userid]["lastcmd"] = "transcribe"
-  context.bot.send_message(chat_id=update.message.chat_id, text="You can now send audio for transcribing".format(userbase[userid]["src"]),  parse_mode='MarkdownV2')
+  context.bot.send_message(chat_id=update.message.chat_id, text="You can now send audio for transcribing",  parse_mode='MarkdownV2')
 
 def dest(update, context):
   global userbase
@@ -180,7 +186,12 @@ def dest(update, context):
   if userid not in userbase:
     userbase[userid] = {}
   userbase[userid]["lastcmd"] = "dest"
-  context.bot.send_message(chat_id=update.message.chat_id, text="You can now send audio in `{}`".format(userbase[userid]["dest"]),  parse_mode='MarkdownV2')
+  if "src" not in userbase[userid]:
+    context.bot.send_message(chat_id=update.message.chat_id, text="Source Language not set, please set source language using `setsource` command",  parse_mode='MarkdownV2')
+  elif "dest" not in userbase[userid]:
+    context.bot.send_message(chat_id=update.message.chat_id, text="Destination Language not set, please set destination language using `setdestination` command",  parse_mode='MarkdownV2')
+  else:
+    context.bot.send_message(chat_id=update.message.chat_id, text="You can now send audio in `{}`".format(userbase[userid]["dest"]),  parse_mode='MarkdownV2')
 
 
 def voice_handler(update, context):
@@ -201,7 +212,7 @@ def voice_handler(update, context):
 def main():
   
   # Initiate the bot and add command handler  
-  updater = Updater('1372620314:AAHxc2wdMdjn-5I8QAaKgQ_qyZc36j6mvcQ', use_context=True)
+  updater = Updater(os.environ.get("BOT_KEY"), use_context=True)
   updater.dispatcher.add_handler(CommandHandler('newword', send_word))
 
   updater.dispatcher.add_handler(CommandHandler('setsource', set_source))
